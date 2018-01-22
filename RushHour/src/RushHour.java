@@ -88,44 +88,20 @@ public class RushHour {
 			possible_states = next_state.possibleStates();
 			while(!possible_states.isEmpty()) {
 				possible_state = possible_states.poll();
-				if(!visited_states.contains(possible_state))
+				if(!visited_states.contains(possible_state)) {
 					next_states.add(possible_state);
+					visited_states.add(possible_state);
+				}
 			}
 		}
 		return -1;
 	}
 	
 	public static void main(String[] args) {
-		RushHour test = new RushHour("initial-state0.txt");
+		RushHour test = new RushHour("initial-state.txt");
 		test.initial_state.printState();
 		System.out.println("----");
 		System.out.println(test.solve());
-		
-		/*HashSet<State> hashset = new HashSet<State>();
-		State s1 = test.initial_state, s2, s3;
-		Vehicle[] v1 = s1.copyVehicles(), v2 = s1.copyVehicles(), v3 = s1.copyVehicles();
-		v2[2].x_end++;
-		v2[2].x_start++;
-		s2 = new State(s1.num_vehicles, s1.size, v2);
-		v3[2].x_end++;
-		v3[2].x_start++;
-		s3 = new State(s1.num_vehicles, s1.size, v3);
-		
-		System.out.println(s1);
-		System.out.println(s2);
-		System.out.println(s3);
-		
-		System.out.println(s1.hashCode());
-		System.out.println(s2.hashCode());
-		System.out.println(s3.hashCode());
-		
-		System.out.println(s2.equals(s1));
-		System.out.println(s2.equals(s3));
-		
-		hashset.add(s1);
-		hashset.add(s2);
-		System.out.println(hashset.contains(s3));*/
-		
 	}
 
 }

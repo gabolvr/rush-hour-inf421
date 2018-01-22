@@ -33,17 +33,6 @@ public class State {
 		this.final_state = vehicles[1].x_end == size && vehicles[1].orientation == 'h';
 	}
 	
-	/*public State(long state, int num_vehicles, int size, Vehicle[] vehicles) {
-		this.num_vehicles = num_vehicles;
-		this.vehicles = vehicles;
-		this.size = size;
-		for (int i)
-		setGrid();
-		this.previous_state = previous;
-		this.moves = moves;
-		this.final_state = vehicles[1].x_end == size && vehicles[1].orientation == 'h';
-	}*/
-	
 	private void setGrid() {
 		grid = new int[size + 1][size + 1];
 		for (int i = 1; i <= size; i++) {
@@ -86,10 +75,6 @@ public class State {
 		
 		State next_state;
 		
-		/*System.out.println("initial :");
-		this.printState();
-		System.out.println("----");*/
-		
 		for (int v = 1; v <= num_vehicles; v++) {
 			switch(vehicles[v].orientation) {
 			case 'h':
@@ -99,9 +84,6 @@ public class State {
 					next_vehicles[v].x_start = x - (vehicles[v].length - 1);
 					next_state = new State(num_vehicles, size, next_vehicles, moves + 1, this);
 					states.add(next_state);
-					/*System.out.println("changing " + v + " + :");
-					next_state.printState();
-					System.out.println("----");*/
 				}
 				for (int x = vehicles[v].x_start - 1; x >= 1 && grid[vehicles[v].y_start][x] == 0; x--) {
 					Vehicle[] next_vehicles = copyVehicles();
@@ -132,51 +114,6 @@ public class State {
 		
 		return states;
 	}
-	
-	/*public Queue<Integer> possibleStates(){
-		Queue<Integer> states = new LinkedList<Integer>();
-		
-		State next_state;
-		
-		for (int v = 1; v <= num_vehicles; v++) {
-			switch(vehicles[v].orientation) {
-			case 'h':
-				for (int x = vehicles[v].x_end + 1; x <= size && grid[vehicles[v].y_start][x] == 0; x++) {
-					Vehicle[] next_vehicles = copyVehicles();
-					next_vehicles[v].x_end = x;
-					next_vehicles[v].x_start = x - (vehicles[v].length - 1);
-					next_state = new State(num_vehicles, size, next_vehicles, moves + 1, this);
-					states.add(next_state);
-				}
-				for (int x = vehicles[v].x_start - 1; x >= 1 && grid[vehicles[v].y_start][x] == 0; x--) {
-					Vehicle[] next_vehicles = copyVehicles();
-					next_vehicles[v].x_start = x;
-					next_vehicles[v].x_end = x + (vehicles[v].length - 1);
-					next_state = new State(num_vehicles, size, next_vehicles, moves + 1, this);
-					states.add(next_state);
-				}
-				break;
-			case 'v':
-				for (int y = vehicles[v].y_end + 1; y <= size && grid[y][vehicles[v].x_start] == 0; y++) {
-					Vehicle[] next_vehicles = copyVehicles();
-					next_vehicles[v].y_end = y;
-					next_vehicles[v].y_start = y - (vehicles[v].length - 1);
-					next_state = new State(num_vehicles, size, next_vehicles, moves + 1, this);
-					states.add(next_state);
-				}
-				for (int y = vehicles[v].y_start - 1; y >= 1 && grid[y][vehicles[v].x_start] == 0; y--) {
-					Vehicle[] next_vehicles = copyVehicles();
-					next_vehicles[v].y_start = y;
-					next_vehicles[v].y_end = y + (vehicles[v].length - 1);
-					next_state = new State(num_vehicles, size, next_vehicles, moves + 1, this);
-					states.add(next_state);
-				}
-				break;
-			}
-		}
-		
-		return states;
-	}*/
 	
 	@Override
 	public boolean equals(Object o) {
