@@ -79,7 +79,7 @@ public class RushHour {
 	}
 	
 	// Verify each possible state until finding a solution
-	public int solve() {
+	public int solve(boolean print_states) {
 		State next_state, possible_state;
 		Queue<State> possible_states;
 		// Verify each state in the queue
@@ -90,7 +90,8 @@ public class RushHour {
 			
 			// If this state is a solution
 			if(next_state.final_state) {
-				printSolution(next_state);
+				if (print_states)
+					printSolution(next_state);
 				return next_state.moves;
 			}
 			
@@ -108,37 +109,46 @@ public class RushHour {
 		return -1;
 	}
 	
+	public int solve() {
+		return solve(true);
+	}
+	
 	// Verify each possible state until finding a solution, using an heuristic
-		public int solveHeuristic() {
-			State next_state, possible_state;
-			Queue<State> possible_states;
-			// Verify each state in the queue
-			while(!next_states.isEmpty()) {
-				next_state = next_states.poll();
-				//next_state.printState();
-				//System.out.println("moves : " + next_state.moves + " hash : " + next_state.hashCode());
-				
-				// If this state is a solution
-				if(next_state.final_state) {
+	public int solveHeuristic(boolean print_states) {
+		State next_state, possible_state;
+		Queue<State> possible_states;
+		// Verify each state in the queue
+		while(!next_states.isEmpty()) {
+			next_state = next_states.poll();
+			//next_state.printState();
+			//System.out.println("moves : " + next_state.moves + " hash : " + next_state.hashCode());
+			
+			// If this state is a solution
+			if(next_state.final_state) {
+				if(print_states)
 					printSolution(next_state);
-					return next_state.moves;
-				}
-				
-				// Get all possible states after this one, with one move, and verify each one of them
-				possible_states = next_state.possibleStates();
-				while(!possible_states.isEmpty()) {
-					possible_state = possible_states.poll();
-					// If it is a state that has not beet visited yet and the heuristic is equal or less than the one from before
-					// Adds it to the queue
-					if(!visited_states.contains(possible_state) && 
-							possible_state.heuristicCarsBetween() <= next_state.heuristicCarsBetween()) {
-						next_states.add(possible_state);
-						visited_states.add(possible_state);
-					}
+				return next_state.moves;
+			}
+			
+			// Get all possible states after this one, with one move, and verify each one of them
+			possible_states = next_state.possibleStates();
+			while(!possible_states.isEmpty()) {
+				possible_state = possible_states.poll();
+				// If it is a state that has not beet visited yet and the heuristic is equal or less than the one from before
+				// Adds it to the queue
+				if(!visited_states.contains(possible_state) && 
+						possible_state.heuristicCarsBetween() <= next_state.heuristicCarsBetween()) {
+					next_states.add(possible_state);
+					visited_states.add(possible_state);
 				}
 			}
-			return -1;
 		}
+		return -1;
+	}
+	
+	public int solveHeuristic() {
+		return solveHeuristic(true);
+	}
 	
 	// Print the sequence of steps necessary to arrive at the solution
 	private void printSolution(State solution) {
@@ -160,21 +170,39 @@ public class RushHour {
 		}
 	}
 	
+	private void compareHeuristic() {
+		long startTime, endTime;
+		double time;
+		
+		System.out.println("# Brute Force Solution");
+		startTime = System.nanoTime();
+		System.out.println("Total steps : " + solve(false));
+		endTime = System.nanoTime();
+		time = (endTime - startTime) / 1000000.0;
+		System.out.println("Elapsed time in milliseconds : " + time);
+		
+		System.out.println();
+		
+		System.out.println("# Solution with Heuristics");
+		startTime = System.nanoTime();
+		System.out.println("Total steps : " + solveHeuristic(false));
+		endTime = System.nanoTime();
+		time = (endTime - startTime) / 1000000.0;
+		System.out.println("Elapsed time in milliseconds : " + time);
+	}
+	
 	public static void main(String[] args) {
-		RushHour test = new RushHour("inputs/GameP11.txt");
-		long startTime, endTime, time;
+		String file;
 		
-		startTime = System.nanoTime();
-		System.out.println("Total steps : " + test.solve());
-		endTime = System.nanoTime();
-		time = (endTime - startTime) / 1000000;
-		System.out.println("Elapsed time in milliseconds : " + time);
-		
-		startTime = System.nanoTime();
-		System.out.println("Total steps : " + test.solveHeuristic());
-		endTime = System.nanoTime();
-		time = (endTime - startTime) / 1000000;
-		System.out.println("Elapsed time in milliseconds : " + time);
+		for (int i = 1; i <= 40; i++) {
+			if (i < 10)
+				file = "inputs/GameP0" + i + ".txt";
+			else
+				file = "inputs/GameP" + i + ".txt";
+			System.out.println("Test " + file);
+			RushHour test = new RushHour(file);test.compareHeuristic();
+			System.out.println("-----");
+		}
 	}
 
 }
