@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class RushHour {
@@ -9,7 +12,13 @@ public class RushHour {
 	
 	int num_vehicles, size;
 	
-	int[][] state;
+	State initial_state;
+	
+	public HashSet<State> visited_states;
+	
+	public HashSet<Integer> visited;
+	
+	public Queue<State> next_states;
 	
 	public RushHour(String name) {
 		try {
@@ -21,19 +30,11 @@ public class RushHour {
 			line = readFile.readLine();
 			if (line != null) {
 				this.size = Integer.parseInt(line);
-				//System.out.println(this.size);
-				this.state = new int[size + 1][size + 1];
-				
-				for (int i = 1; i <= size; i++) {
-					for (int j = 1; j <= size; j++)
-						state[i][j] = 0;
-				}
 			}
 			
 			line = readFile.readLine();
 			if (line != null) {
 				this.num_vehicles = Integer.parseInt(line);
-				//System.out.println(this.num_vehicles);
 				this.vehicles = new Vehicle[num_vehicles + 1];
 			}
 			
@@ -59,7 +60,13 @@ public class RushHour {
 				line = readFile.readLine();
 			}
 			
-			setGrid();
+			initial_state = new State(num_vehicles, size, vehicles);
+			
+			this.next_states = new LinkedList<State>();
+			this.next_states.add(initial_state);
+			
+			this.visited_states = new HashSet<State>();
+			this.visited_states.add(initial_state);
 			
 			file.close();
 		} catch(IOException e) {
@@ -67,32 +74,58 @@ public class RushHour {
 		}
 	}
 	
-	
-	private void setGrid() {
-		for (int v = 1; v <= num_vehicles; v++) {
-			for (int i = vehicles[v].y_start; i <= vehicles[v].y_end; i++) {
-				for (int j = vehicles[v].x_start; j <= vehicles[v].x_end; j++) {
-					if (state[i][j] == 0)
-						state[i][j] = v;
-				}
+	public int solve() {
+		State next_state, possible_state;
+		Queue<State> possible_states;
+		while(!next_states.isEmpty()) {
+			next_state = next_states.poll();
+			next_state.printState();
+			System.out.println("moves : " + next_state.moves + " hash : " + next_state.hashCode());
+			
+			if(next_state.final_state)
+				return next_state.moves;
+			
+			possible_states = next_state.possibleStates();
+			while(!possible_states.isEmpty()) {
+				possible_state = possible_states.poll();
+				if(!visited_states.contains(possible_state))
+					next_states.add(possible_state);
 			}
 		}
-	}
-	
-	private void printState() {
-		for (int i = 1; i <= size; i++) {
-			for (int j = 1; j <= size; j++) {
-				if (j < size)
-					System.out.print(state[i][j] + " ");
-				else
-					System.out.println(state[i][j]);
-			}
-		}
+		return -1;
 	}
 	
 	public static void main(String[] args) {
-		RushHour test = new RushHour("initial-state.txt");
-		test.printState();
+		RushHour test = new RushHour("initial-state0.txt");
+		test.initial_state.printState();
+		System.out.println("----");
+		System.out.println(test.solve());
+		
+		/*HashSet<State> hashset = new HashSet<State>();
+		State s1 = test.initial_state, s2, s3;
+		Vehicle[] v1 = s1.copyVehicles(), v2 = s1.copyVehicles(), v3 = s1.copyVehicles();
+		v2[2].x_end++;
+		v2[2].x_start++;
+		s2 = new State(s1.num_vehicles, s1.size, v2);
+		v3[2].x_end++;
+		v3[2].x_start++;
+		s3 = new State(s1.num_vehicles, s1.size, v3);
+		
+		System.out.println(s1);
+		System.out.println(s2);
+		System.out.println(s3);
+		
+		System.out.println(s1.hashCode());
+		System.out.println(s2.hashCode());
+		System.out.println(s3.hashCode());
+		
+		System.out.println(s2.equals(s1));
+		System.out.println(s2.equals(s3));
+		
+		hashset.add(s1);
+		hashset.add(s2);
+		System.out.println(hashset.contains(s3));*/
+		
 	}
 
 }
