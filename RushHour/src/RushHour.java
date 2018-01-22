@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class RushHour {
@@ -79,11 +80,13 @@ public class RushHour {
 		Queue<State> possible_states;
 		while(!next_states.isEmpty()) {
 			next_state = next_states.poll();
-			next_state.printState();
-			System.out.println("moves : " + next_state.moves + " hash : " + next_state.hashCode());
+			//next_state.printState();
+			//System.out.println("moves : " + next_state.moves + " hash : " + next_state.hashCode());
 			
-			if(next_state.final_state)
+			if(next_state.final_state) {
+				printSolution(next_state);
 				return next_state.moves;
+			}
 			
 			possible_states = next_state.possibleStates();
 			while(!possible_states.isEmpty()) {
@@ -97,11 +100,27 @@ public class RushHour {
 		return -1;
 	}
 	
+	private void printSolution(State solution) {
+		Stack<State> steps = new Stack<State>();
+		int num_steps = 0;
+		
+		while(solution != null) {
+			steps.push(solution);
+			solution = solution.previous_state;
+		}
+		
+		while(!steps.isEmpty()) {
+			System.out.println("# Step " + num_steps + " :");
+			solution = steps.pop();
+			solution.printState();
+			System.out.println("-----");
+			num_steps++;
+		}
+	}
+	
 	public static void main(String[] args) {
 		RushHour test = new RushHour("initial-state.txt");
-		test.initial_state.printState();
-		System.out.println("----");
-		System.out.println(test.solve());
+		System.out.println("Total steps : " + test.solve());
 	}
 
 }
