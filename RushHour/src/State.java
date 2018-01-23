@@ -131,6 +131,7 @@ public class State {
 		return states;
 	}
 	
+	// Heuristic with the number of cars between the first one and the exit
 	public int heuristicCarsBetween() {
 		int cars = 0;
 		for (int x = vehicles[1].x_end + 1; x <= size; x++) {
@@ -138,6 +139,11 @@ public class State {
 				cars++;
 		}
 		return cars;
+	}
+	
+	// Heuristic with the distance between the first car and the exit
+	public int heuristicDistance() {
+		return size - vehicles[1].x_start;
 	}
 	
 	// Verify if two states are equal
